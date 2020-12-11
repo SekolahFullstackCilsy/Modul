@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import { Person } from './components/Person'
 function App() {
   const initialPersons = [
@@ -8,14 +8,32 @@ function App() {
   
   const [persons, setPersons] = useState(initialPersons)
 
+  useEffect(() => {
+    console.log('akan dijalankan ketika komponen berhasil di render')
+  }, [])
+
+  useEffect(() => {
+    console.log(
+      'akan dijalankan ketika komponen berhasil di re-render karena perubahan state persons'
+    )
+  }, [persons])
+
+  useEffect(() => {
+    return () => {
+      console.log(
+        'akan dijalankan ketika komponen mengalami unmounting'
+      )
+    }
+  }, [])
+
   return (
-    <div>
+    <Fragment>
       {
         persons.map(person => (
-          <Person person={person} />                 
+          <Person key={person.id} person={person} />
         ))
       }    
-    </div>
+    </Fragment>
   );
 }
 
