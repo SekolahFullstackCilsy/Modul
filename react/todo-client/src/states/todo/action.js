@@ -1,57 +1,101 @@
+import axios from 'axios'
+
 export const getTodo = () => {
-  return {
-    type: 'GET_TODO',
-    payload: [
-      {
-        id: Math.random(),
-        name: 'Belajar',
-        description: 'Belajar persiapan small project'
-      },
-      {
-        id: Math.random(),
-        name: 'Membaca',
-        description: 'Membaca novel sebelum tidur'
-      },
-      {
-        id: Math.random(),
-        name: 'Meeting',
-        description: 'Meeting dengan client jam 7 malam'
-      }
-    ]
-  }
+  const request = axios.get('http://localhost:8000/todo')
+
+  return (dispatch) =>
+    request.then(response =>
+      dispatch({
+        type: 'GET_TODO',
+        payload: response.data.data
+      })
+    )
 }
 
 export const getTodoById = (id) => {                 
-  return {
-    type: 'GET_TODO_BY_ID',
-    payload: {
-      id
-    }
-  }
+  const request = axios.get(`http://localhost:8000/todo/${id}`)
+
+  return (dispatch) =>
+    request.then(response =>
+      dispatch({
+        type: 'GET_TODO_BY_ID',
+        payload: response.data.data
+      })
+    )
 }
 
-export const addTodo = (todo) => {                       
-  return {
-    type: 'ADD_TODO',
-    payload: {
-      ...todo,
-      id: Math.random()
+export const addTodo = (todo) => {  
+  const request = axios.post('http://localhost:8000/todo', todo, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
-  }
+  })
+
+  return (dispatch) =>
+    request.then(response =>
+      dispatch({
+        type: 'ADD_TODO',
+        payload: response.data.data
+      })
+    ).catch(error => {
+      alert('You must re-login')
+      localStorage.removeItem('isLogin')
+      localStorage.removeItem('token')
+    })
 }
 
 export const updateTodo = (todo) => {             
-  return {
-    type: 'UPDATE_TODO',
-    payload: todo
-  }
+  const request = axios.patch('http://localhost:8000/todo', todo, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+
+  return (dispatch) =>
+    request.then(response =>
+      dispatch({
+        type: 'UPDATE_TODO',
+        payload: response.data.data
+      })
+    ).catch(error => {
+      alert('You must re-login')
+      localStorage.removeItem('isLogin')
+      localStorage.removeItem('token')
+    })
 }
 
-export const deleteTodo = (id) => {                    
-  return {
-    type: 'DELETE_TODO',
-    payload: {
-      id
+export const deleteTodo = (id) => {      
+  const request = axios.delete(`http://localhost:8000/todo/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
-  }
+  })
+
+  return (dispatch) =>
+    request.then(response =>
+      dispatch({
+        type: 'DELETE_TODO',
+        payload: {id}
+      })
+    ).catch(error => {
+      alert('You must re-login')
+      localStorage.removeItem('isLogin')
+      localStorage.removeItem('token')
+    })
+}
+
+export const introReduxThunk = () => {                     
+  const request = axios.get('http://some-api')
+
+  return request.then(response => {
+    return {
+      type: 'REDUX_THUNK',
+      payload: 'Redux thunk'
+    }
+  }).catch(error => {
+    return {
+      type: 'REDUX_THUNK_ERROR',
+      payload: error.message
+    }
+  })
 }

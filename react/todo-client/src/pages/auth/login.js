@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import useRouter from 'use-react-router'
+import axios from 'axios'
 import { Layout } from '../../components/Layout'
 
 const LoginPage = () => {
@@ -18,23 +19,25 @@ const LoginPage = () => {
     })
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    const users = JSON.parse(localStorage.getItem('users'))
-
-    if (!users || users.length === 0) {
-      alert('wrong credentials')
-    } else {
-      const index = users.findIndex(
-        user => user.username === loginData.username && 
-        user.password === loginData.password
+    try {
+      const res = await axios.post(
+        'http://localhost:8000/auth/login', loginData
       )
-      
-      if (index === -1) {
-        alert('wrong credentials')
-      } else {
+
+      if (res.data.code === 200) {
+        localStorage.setItem('token', res.data.data.access_token)
         localStorage.setItem('isLogin', JSON.stringify(true))
         history.push('/')
+      } else {
+        alert('error login')
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        alert(error.response.data)
+      } else {
+        alert(error.message)
       }
     }
   }

@@ -14,15 +14,10 @@ const todoReducer = (state = initialState, action) => {
         ...state,
         todos: action.payload                      
       }
-    case 'GET_TODO_BY_ID':
-      const findTodo = state.todos
-        .find(
-          todo => String(todo.id) === String(action.payload.id)
-        )
-
+    case 'GET_TODO_BY_ID':                               
       return {
         ...state,
-        todo: findTodo
+        todo: action.payload
       }
     case 'ADD_TODO':
       return {

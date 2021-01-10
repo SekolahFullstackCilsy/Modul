@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import useRouter from 'use-react-router'
+import axios from 'axios'                         
 import { Layout } from '../../components/Layout'
 
 const RegisterPage = () => {
@@ -18,20 +19,25 @@ const RegisterPage = () => {
     })
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    const users = JSON.parse(localStorage.getItem('users'))
+    try {
+      const res = await axios.post(
+        'http://localhost:8000/auth/register', registerData
+      )
 
-    if (!users || users.length === 0) {
-      localStorage.setItem(
-        'users', JSON.stringify([registerData])
-      )
-    } else {
-      localStorage.setItem(
-        'users', JSON.stringify([...users, registerData])
-      )
+      if (res.data.code === 201) {
+        history.push('/login')
+      } else {
+        alert('error register')
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        alert(error.response.data)
+      } else {
+        alert(error.message)
+      }
     }
-    history.push('/login')
   }
   
   return (

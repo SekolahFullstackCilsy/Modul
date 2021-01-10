@@ -10,12 +10,17 @@ import {
   ArrowsFullscreen, 
   Trash 
 } from 'react-bootstrap-icons';
+import { useEffect } from 'react'
 
 
 const Component = (props) => {
   const { todos, getTodo } = props
   const { history } = useRouter()
   
+  useEffect(() => {
+    getTodo()                                             
+  }, [getTodo])
+
   return todos && todos.length > 0 ? (
     <Layout>
       <ListGroup className="mb-5">
